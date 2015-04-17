@@ -5,6 +5,7 @@ defmodule DropboxDelta.Mixfile do
     [app: :dropbox_delta,
      version: "0.0.1",
      elixir: "~> 1.0",
+     source_url: "https://github.com/rwdaigle/dropbox_delta.ex",
      deps: deps]
   end
 
@@ -28,7 +29,10 @@ defmodule DropboxDelta.Mixfile do
     [
       {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.1"},
       {:httpotion, "~> 2.0.0"},
-      {:mock, "~> 0.1.0"}
+      {:poison, "~> 1.4.0"},
+      {:mock, "~> 0.1.0"},
+      {:ex_doc, github: "elixir-lang/ex_doc"},
+      {:markdown, github: "devinus/markdown"}
     ]
   end
 end

@@ -1,4 +1,8 @@
-%{"httpotion": {:hex, :httpotion, "2.0.0"},
+%{"ex_doc": {:git, "git://github.com/elixir-lang/ex_doc.git", "27a1efed075ce6913385d87fb5eafe90cef4b776", []},
+  "hoedown": {:git, "git://github.com/hoedown/hoedown.git", "365ad578e7b767ffe7126f029c184d727a3e95b3", []},
+  "httpotion": {:hex, :httpotion, "2.0.0"},
   "ibrowse": {:git, "git://github.com/cmullaparthi/ibrowse.git", "d2e369ff42666c3574b8b7ec26f69027895c4d94", [tag: "v4.1.1"]},
+  "markdown": {:git, "git://github.com/devinus/markdown.git", "cd0df79b6f1cc374499d47f6ba6aaab5096f874f", []},
   "meck": {:hex, :meck, "0.8.2"},
-  "mock": {:hex, :mock, "0.1.0"}}
+  "mock": {:hex, :mock, "0.1.0"},
+  "poison": {:hex, :poison, "1.4.0"}}
