@@ -28,7 +28,8 @@
       "mime_type": "text/html",
       "revision": 12
     }],
-    ["/ryandaigle.com/old", null]
+    ["/ryandaigle.com/old", null],
+    ["/ryandaigle.com/index-test.html", null]
   ],
   "reset": true
 }

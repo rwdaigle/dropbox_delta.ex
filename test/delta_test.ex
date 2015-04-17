@@ -1,16 +1,41 @@
 defmodule DeltaTest do
-  use ExUnit.Case, async: false
+  use ExUnit.Case, async: true
   import Mock
   alias DropboxDelta.Delta
   alias Poison.Parser, as: JSON
 
   @timeout 250
 
-  test "resolve" do
+  doctest DropboxDelta
+
+  setup do
     {:ok, body} = File.read("test/fixtures/delta.json")
-    {:ok, delta} = JSON.parse(body)
-    # IO.puts inspect(Dict.get(delta, "entries"))
-    # resolved = Delta.resolve(Dict.get(delta, "entries"))
+    {:ok, json} = JSON.parse(body)
+    {:ok,
+      body: body,
+      json: json,
+      removed: ["/ryandaigle.com/old", "/ryandaigle.com/index-test.html"],
+      updated: [
+        [path: "/ryandaigle.com", revision: 11, dir: true],
+        [path: "/ryandaigle.com/index.html", revision: 12, dir: false]
+      ]
+    }
+  end
+
+  test "removed", context do
+    entries = Dict.get(context[:json], "entries")
+    assert Delta.removed(entries) == context[:removed]
+  end
+
+  test "updated", context do
+    entries = Dict.get(context[:json], "entries")
+    assert Delta.updated(entries) == context[:updated]
+  end
+
+  test "collect", context do
+    expected = %{current_cursor: context[:json]["cursor"], reset: context[:json]["reset"],
+      removed: context[:removed], updated: context[:updated]}
+    assert Delta.collect(context[:json]) == expected
   end
 end
 
@@ -18,23 +43,17 @@ end
 #   "from_cursor": "AAGsh3R...",
 #   "current_cursor": "AAGsh3R...",
 #   "reset": false,
-#   "current": [
+#   "updated": [
 #     {
 #       "path": "/ryandaigle.com/index.html",
 #       "directory": false,
+#       "revision": 12,
 #       "contents": "<html></html>"
 #     }, {
 #       "path": "/ryandaigle.com/files",
-#       "directory": true
+#       "directory": true,
+#       "revision": 11
 #     }
 #   ],
-#   "removed": [
-#     {
-#       "path": "/ryandaigle.com/old",
-#       "directory": true
-#     }, {
-#       "path": "/ryandaigle.com/index-test.html",
-#       "directory": false
-#     }
-#   ],
+#   "removed": ["/ryandaigle.com/old", "/ryandaigle.com/index-test.html"],
 # }
