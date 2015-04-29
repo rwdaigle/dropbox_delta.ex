@@ -1,7 +1,7 @@
 defmodule FileTest do
 
-  use ExUnit.Case, async: false
   import Mock
+  use ExUnit.Case, async: false
   alias DropboxDelta.File, as: DBFile
 
   @timeout 250

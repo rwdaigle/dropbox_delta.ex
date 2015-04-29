@@ -1,12 +1,11 @@
 defmodule DeltaTest do
   use ExUnit.Case, async: true
-  import Mock
   alias DropboxDelta.Delta
   alias Poison.Parser, as: JSON
 
   @timeout 250
 
-  doctest DropboxDelta
+  doctest DropboxDelta.Delta
 
   setup do
     {:ok, body} = File.read("test/fixtures/delta.json")
@@ -22,25 +21,24 @@ defmodule DeltaTest do
     }
   end
 
-  test "removed", context do
-    entries = Dict.get(context[:json], "entries")
-    assert Delta.removed(entries) == context[:removed]
-  end
-
-  test "updated", context do
-    entries = Dict.get(context[:json], "entries")
-    assert Delta.updated(entries) == context[:updated]
-  end
-
   test "collect", context do
     expected = %{current_cursor: context[:json]["cursor"], reset: context[:json]["reset"],
-      removed: context[:removed], updated: context[:updated]}
+    removed: context[:removed], updated: context[:updated]}
     assert Delta.collect(context[:json]) == expected
   end
+
+  # test "removed", context do
+  #   entries = Dict.get(context[:json], "entries")
+  #   assert Delta.removed(entries) == context[:removed]
+  # end
+  #
+  # test "updated", context do
+  #   entries = Dict.get(context[:json], "entries")
+  #   assert Delta.updated(entries) == context[:updated]
+  # end
 end
 
 # {
-#   "from_cursor": "AAGsh3R...",
 #   "current_cursor": "AAGsh3R...",
 #   "reset": false,
 #   "updated": [

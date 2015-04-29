@@ -14,6 +14,8 @@ use Mix.Config
 #       level: :info,
 #       format: "$date $time [$level] $metadata$message\n",
 #       metadata: [:user_id]
+config :dropbox, api_host: System.get_env("DROPBOX_API_HOST") || "https://api.dropbox.com"
+config :dropbox, delta_base: System.get_env("DROPBOX_API_DELTA_BASE") || "/1/delta"
 config :dropbox, file_host: System.get_env("DROPBOX_FILE_HOST") || "https://api-content.dropbox.com"
 config :dropbox, file_base: System.get_env("DROPBOX_FILE_BASE") || "/1/files/auto"
 
