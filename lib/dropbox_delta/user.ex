@@ -2,6 +2,7 @@ defmodule DropboxDelta.User do
 
   alias HTTPotion.Response
   alias DropboxDelta.Delta
+  alias DropboxDelta.File, as: DBFile
   alias Poison.Parser, as: JSON
 
   @dropbox_delta_url Application.get_env(:dropbox, :api_host) <> Application.get_env(:dropbox, :delta_base)
@@ -13,7 +14,25 @@ defmodule DropboxDelta.User do
     |> HTTPotion.post([headers: headers(token)])
     |> parse_delta_body
     |> normalize_delta
+    |> add_contents(token)
   end
+
+  defp add_contents(delta, token) do
+    new_updated = Dict.get(delta, :updated)
+    # |> Enum.filter(fn(entry) -> !Dict.fetch!(entry, :dir) end)
+    |> Enum.map(fn(entry) -> if(Dict.fetch!(entry, :dir)) do
+        entry else Dict.put(entry, :contents, file_contents(path: Dict.fetch!(entry, :path), access_token: token)) end
+      end)
+    # |> Enum.map(&Dict.put(&1, :contents, file_contents(path: Dict.fetch!(&1, :path), access_token: token)))
+    Dict.put(delta, :updated, new_updated)
+  end
+
+  defp file_contents([path: path, access_token: token]) do
+    DBFile.contents(path, token) |> get_file_contents
+  end
+
+  defp get_file_contents({:body, contents}), do: contents
+  defp get_file_contents({:error, _}), do: raise "Could not get file from Dropbox"
 
   defp normalize_delta({:body, body}), do: body |> Delta.collect
   defp normalize_delta({:error, message}), do: message

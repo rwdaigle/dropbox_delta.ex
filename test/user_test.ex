@@ -9,8 +9,12 @@ defmodule UserTest do
   doctest DropboxDelta.User
 
   test "delta" do
-    {:ok, body} = File.read("test/fixtures/delta.json")
-    with_mock HTTPotion, [post: fn(_, _) -> %HTTPotion.Response{status_code: 200, body: body} end] do
+    {:ok, delta_body} = File.read("test/fixtures/delta.json")
+    {:ok, file_body} = File.read("test/fixtures/file.html")
+    with_mock HTTPotion, [
+      post: fn(_, _) -> %HTTPotion.Response{status_code: 200, body: delta_body} end,
+      get: fn(_, _) -> %HTTPotion.Response{status_code: 200, body: file_body} end
+    ] do
       assert User.delta(access_token: "12ab") == expected_delta
       assert called HTTPotion.post(delta_url, [headers: headers("12ab")])
     end
@@ -28,7 +32,7 @@ defmodule UserTest do
       removed: ["/ryandaigle.com/old", "/ryandaigle.com/index-test.html"],
       updated: [
         [path: "/ryandaigle.com", revision: 11, dir: true],
-        [path: "/ryandaigle.com/index.html", revision: 12, dir: false, contents: body]
+        [contents: body, path: "/ryandaigle.com/index.html", revision: 12, dir: false]
       ]
     }
   end
