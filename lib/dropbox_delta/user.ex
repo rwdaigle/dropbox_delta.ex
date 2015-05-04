@@ -8,10 +8,9 @@ defmodule DropboxDelta.User do
   @dropbox_delta_url Application.get_env(:dropbox, :api_host) <> Application.get_env(:dropbox, :delta_base)
 
   def delta([access_token: token]), do: delta([access_token: token, cursor: nil])
-  def delta([access_token: token, cursor: _cursor]) do
-    # Need to add start cursor
+  def delta([access_token: token, cursor: cursor]) do
     @dropbox_delta_url
-    |> HTTPotion.post([headers: headers(token)])
+    |> HTTPotion.post([body: body(cursor), headers: headers(token)])
     |> parse_delta_body
     |> normalize_delta
     |> add_contents(token)
@@ -40,6 +39,9 @@ defmodule DropboxDelta.User do
   defp headers(access_token) do
     ["User-Agent": "dropbox_delta.ex", "Authorization": "Bearer #{access_token}"]
   end
+
+  defp body(nil), do: nil
+  defp body(cursor), do: "cursor=#{cursor}"
 
   defp parse_delta_body(%Response{status_code: 200, body: body}), do: JSON.parse(body) |> get_parsed_body
   defp parse_delta_body(%Response{status_code: status_code}) do
