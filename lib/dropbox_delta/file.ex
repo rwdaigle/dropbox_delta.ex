@@ -9,7 +9,7 @@ defmodule DropboxDelta.File do
 
       # If "123abc" were a real access token
       DropboxDelta.File.contents("/test/index.html", "123abc")
-      {:body, "<html><body>Hi</body></html>"}
+      {:ok, "<html><body>Hi</body></html>"}
 
   Error responses:
 
@@ -22,14 +22,12 @@ defmodule DropboxDelta.File do
     |> handle_response
   end
 
-  defp handle_response(%Response{status_code: 200, body: body}), do: {:body, body}
+  defp handle_response(%Response{status_code: 200, body: body}), do: {:ok, body}
   defp handle_response(%Response{status_code: status, body: body}), do: {:error, status, :body, body}
 
-  defp file_url(path) do
-    @dropbox_file_base <> path
-  end
+  defp file_url(path), do: @dropbox_file_base <> path
 
   defp headers(access_token) do
-    ["User-Agent": "dropbox_delta.ex", "Authorization": "Bearer " <> access_token]
+    ["User-Agent": "dropbox_delta.ex", "Authorization": "Bearer #{access_token}"]
   end
 end
