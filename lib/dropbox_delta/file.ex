@@ -7,11 +7,11 @@ defmodule DropboxDelta.File do
   @doc ~S"""
   Given a file path and the user's access token, get the contents of the file.
 
-      # If "123abc" were a real access token
-      DropboxDelta.File.contents("/test/index.html", "123abc")
+      iex> user_access_token = Application.get_env(:dropbox, :user_access_token)
+      iex> DropboxDelta.File.contents("/test/index.html", user_access_token)
       {:ok, "<html><body>Hi</body></html>"}
 
-  Error responses:
+  Error conditions:
 
       iex> DropboxDelta.File.contents("/test/index.html", "invalid")
       {:error, 401, :body, "{\"error\": \"Invalid OAuth2 token.\"}"}

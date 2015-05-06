@@ -8,12 +8,26 @@ defmodule DropboxDelta.User do
   @dropbox_delta_url Application.get_env(:dropbox, :api_host) <> Application.get_env(:dropbox, :delta_base)
 
   def delta([access_token: token]), do: delta([access_token: token, cursor: nil])
+
+  @doc ~S"""
+  Get a user's latest updates from a given cursor.
+
+  # If "123abc" were a real access token
+  DropboxDelta.File.contents("/test/index.html", "123abc")
+  {:ok, "<html><body>Hi</body></html>"}
+
+  Error responses:
+
+  iex> DropboxDelta.File.contents("/test/index.html", "invalid")
+  {:error, 401, :body, "{\"error\": \"Invalid OAuth2 token.\"}"}
+  """
   def delta([access_token: token, cursor: cursor]) do
     @dropbox_delta_url
     |> HTTPotion.post([body: body(cursor), headers: headers(token)])
     |> parse_response
     |> normalize_delta
     |> add_contents(token)
+    # has more support?
   end
 
   defp add_contents(delta, token) do
